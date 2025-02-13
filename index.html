@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    
+    <style>
+        #imgOne {
+      width: 200px; 
+      height: auto; 
+      transition: transform 1s ease; 
+
+    }
+    .rotate {
+      transform: rotate(360deg); 
+    }
+      </style>
+
+</head>
+<body>
+
+    <div id="divOne" style="border:2px solid black;">
+        <p>Paragraph 1</p>
+        <p>Paragraph 2</p>
+        <p>Paragraph 3</p>
+      </div>
+      <button id="countButton">Count Paragraphs</button>
+
+
+    
+      <button id="replaceButton">Replace All Paragraphs</button>
+
+
+      <button class="btn">Button 1</button>
+      <button class="btn">Button 2</button>
+      <button id="toggleButton">Toggle Text</button>
+
+
+      <button id="cloneButton">Clone</button>
+
+
+      <button class="btn" title="This button appends text">Button 1</button>
+      <button class="btn" title="This button changes color">Button 2</button>
+  
+   
+  <button class="btn" id="disableButton">Disable Buttons</button>
+  <br><br>
+
+
+  <div id="divTwo"></div>
+  <button id="startTimerButton">Start Timer</button>
+  <br><br>
+
+
+  <img id="imgOne" src="1.jpg">
+  <button id="rotateButton">Rotate Image</button>
+  <br><br>
+
+
+  <div id="divThree"></div>
+  <button id="createListButton">Create List</button>
+
+
+  <button id="loadDataButton">Load Data</button>
+  <div id="response"></div>
+
+
+
+    <script>
+        $(document).ready(function(){
+
+    $('#countButton').click(function() {
+        // Count the number of <p> elements inside #divOne
+        var paragraphCount = $('#divOne p').length;
+        alert('Number of paragraphs: ' + paragraphCount);
+      });
+
+
+   $('#replaceButton').click(function() {
+        $('#divOne').empty();
+        $('#divOne').append('<p>New Paragraph Content</p>');
+      });
+
+
+
+    var originalTexts = {};
+      $('.btn').each(function() {
+        originalTexts[$(this).attr('id')] = $(this).text();
+      });
+
+      $('#toggleButton').click(function() {
+        $('.btn').each(function() {
+          var button = $(this);
+
+          // Toggle button text between "Clicked" and the original text
+          if (button.text() === 'Clicked') {
+            button.text(originalTexts[button.attr('id')] || 'Button'); // Reset to original text
+          } else {
+            button.text('Clicked'); 
+          }
+        });
+      });
+
+
+
+    $('#cloneButton').click(function() {
+        var clonedDiv = $('#divOne').clone();
+        $('body').append(clonedDiv);
+      });
+
+
+    
+    $('.btn').each(function() {
+        var tooltipText = $(this).attr('title');  
+        $(this).hover(
+          function() {
+            // Show tooltip when mouse enters
+            $('<div class="tooltip"></div>')
+              .text(tooltipText)
+              .fadeIn('slow');
+          },
+          function() {
+            // Hide tooltip when mouse leaves
+            $('.tooltip').fadeOut('slow', function() {
+              $(this).remove();
+            });
+          });
+      });
+
+
+
+    $('.btn').click(function() {
+        // Disable all other buttons except the clicked one
+        $('button').not(this).prop('disabled', true);
+      });
+
+      
+
+    $('#startTimerButton').click(function() {
+        var countdown = 10; 
+        // Display the initial countdown value inside #divTwo
+        $('#divTwo').text('Timer: ' + countdown + ' seconds');
+
+        var timerInterval = setInterval(function() {
+          countdown--; 
+          // Update the timer display
+          $('#divTwo').text('Timer: ' + countdown + ' seconds');
+          if (countdown <= 0) {
+            clearInterval(timerInterval); // Stop the timer
+            $('#divTwo').remove(); 
+          }
+        }, 1000); 
+      });
+
+
+      
+    $('#rotateButton').click(function() {
+        $('#imgOne').toggleClass('rotate');
+      });
+
+
+
+          $('#createListButton').click(function() {
+        var input = prompt("Enter items for the list :");
+        
+        if (input) {
+          // Split the input string into an array of items
+          var items = input.split(',');
+          var ul = $('<ul></ul>');
+
+          $.each(items, function(index, item) {
+            var li = $('<li></li>').text(item); 
+            ul.append(li); 
+          });
+          // Clear any existing content inside #divThree and append the new <ul>
+          $('#divThree').empty().append(ul);
+        }
+      });
+
+
+      $('#loadDataButton').click(function() {
+        $.ajax({
+          url: 'https://jsonplaceholder.typicode.com/posts/1',  
+          type: 'GET',  
+          dataType: 'json',  
+          success: function(response) {
+            // On success
+            $('#response').html(`
+              <h3>Title: ${response.title}</h3>
+              <p>${response.body}</p>
+            `);
+          },
+          // on fail
+          error: function(xhr, status, error) {
+            console.error('Error: ', error);
+            $('#response').text('An error occurred while fetching the data.');
+          }
+        });
+      });
+    
+})
+    </script>
+</body>
+</html>
